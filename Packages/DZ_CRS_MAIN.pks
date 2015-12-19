@@ -313,7 +313,7 @@ AS
    PROCEDURE determine_srid(
        p_input          IN  VARCHAR2
       ,p_output         OUT NUMBER
-      ,p_error_code     OUT NUMBER
+      ,p_return_code    OUT NUMBER
       ,p_status_message OUT VARCHAR2
    );
    
