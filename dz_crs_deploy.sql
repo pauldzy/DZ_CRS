@@ -551,8 +551,8 @@ AS
    /*
    header: DZ_CRS
      
-   - Build ID: 7
-   - TFS Change Set: 8317
+   - Build ID: 8
+   - TFS Change Set: 8318
    
    Utilities for the management and manipulation of Oracle Spatial and Graph 
    transformations and grids.
@@ -858,7 +858,7 @@ AS
    PROCEDURE determine_srid(
        p_input          IN  VARCHAR2
       ,p_output         OUT NUMBER
-      ,p_error_code     OUT NUMBER
+      ,p_return_code    OUT NUMBER
       ,p_status_message OUT VARCHAR2
    );
    
@@ -1802,7 +1802,7 @@ AS
    ) RETURN NUMBER
    AS
       num_output  NUMBER;
-      num_error   NUMBER;
+      num_return  NUMBER;
       str_message VARCHAR2(4000 Char);
       
    BEGIN
@@ -1810,18 +1810,18 @@ AS
       determine_srid(
           p_input          => p_input
          ,p_output         => num_output
-         ,p_error_code     => num_error
+         ,p_return_code    => num_return
          ,p_status_message => str_message
       );
       
-      IF num_error = 0
+      IF num_return = 0
       THEN
          RETURN num_output;
          
       ELSE
          RAISE_APPLICATION_ERROR(
              -20001
-            ,'error ' || TO_CHAR(num_error) || ': ' || str_message
+            ,'error ' || TO_CHAR(num_return) || ': ' || str_message
          );
          
       END IF;
@@ -1833,7 +1833,7 @@ AS
    PROCEDURE determine_srid(
        p_input          IN  VARCHAR2
       ,p_output         OUT NUMBER
-      ,p_error_code     OUT NUMBER
+      ,p_return_code    OUT NUMBER
       ,p_status_message OUT VARCHAR2
    )
    AS
@@ -1852,21 +1852,21 @@ AS
       IF p_input IS NULL
       THEN
          p_output := num_default_srid;
-         p_error_code := 0;
+         p_return_code := 0;
          p_status_message := 'WARNING: Empty Input'; 
          RETURN;
          
       ELSIF p_input ='WKT'
       THEN
          p_output := num_default_srid;
-         p_error_code := 0;
+         p_return_code := 0;
          p_status_message := NULL; 
          RETURN;
       
       ELSIF p_input ='WKT,SRID=8265'
       THEN
          p_output := 8265;
-         p_error_code := 0;
+         p_return_code := 0;
          p_status_message := NULL; 
          RETURN;
       
@@ -1890,13 +1890,13 @@ AS
          IF num_srid_output IS NULL
          THEN
             p_output         := NULL;
-            p_error_code    := -90;
+            p_return_code    := -90;
             p_status_message := 'unable to parse SRID from ' || p_input || '.';
             RETURN;
             
          END IF;
          
-         p_error_code    := 0;
+         p_return_code    := 0;
          p_status_message := NULL;
          
       ELSIF UPPER(str_left_side) = 'SRSNAME'
@@ -1906,13 +1906,13 @@ AS
          IF num_srid_output IS NULL
          THEN
             p_output         := NULL;
-            p_error_code    := -91;
+            p_return_code    := -91;
             p_status_message := 'ERROR, unable to parse spatial reference from ' || p_input || '.';
             RETURN;
             
          END IF;
          
-         p_error_code    := 0;
+         p_return_code    := 0;
          p_status_message := NULL;
       
       END IF;
@@ -1935,14 +1935,14 @@ AS
          IF num_srid_output IS NULL
          THEN
             p_output         := NULL;
-            p_error_code    := -92;
+            p_return_code    := -92;
             p_status_message := 'unable to parse numeric EPSG code from ' || p_input || '.';
             RETURN;
 
          END IF;
          
          num_srid_output  := epsg2srid(num_srid_output);
-         p_error_code    := 0;
+         p_return_code    := 0;
          p_status_message := NULL;
          
       ELSIF UPPER(str_left_side) = 'SDO'
@@ -1952,13 +1952,13 @@ AS
          IF num_srid_output IS NULL
          THEN
             p_output         := NULL;
-            p_error_code    := -93;
+            p_return_code    := -93;
             p_status_message := 'unable to parse numeric SDO code from ' || p_input || '.';
             RETURN;
 
          END IF;
          
-         p_error_code    := 0;
+         p_return_code    := 0;
          p_status_message := NULL;
          
       END IF;
@@ -1990,7 +1990,7 @@ AS
       OR num_check != 1
       THEN
          p_output         := NULL;
-         p_error_code    := -94;
+         p_return_code    := -94;
          p_status_message := 'host Oracle instance has no spatial reference for ' || num_srid_output || ' as derived from ' || p_input || '.';
          RETURN;
          
@@ -2855,9 +2855,9 @@ CREATE OR REPLACE PACKAGE dz_crs_test
 AUTHID DEFINER
 AS
 
-   C_TFS_CHANGESET CONSTANT NUMBER := 8317;
+   C_TFS_CHANGESET CONSTANT NUMBER := 8318;
    C_JENKINS_JOBNM CONSTANT VARCHAR2(255 Char) := 'NULL';
-   C_JENKINS_BUILD CONSTANT NUMBER := 7;
+   C_JENKINS_BUILD CONSTANT NUMBER := 8;
    C_JENKINS_BLDID CONSTANT VARCHAR2(255 Char) := 'NULL';
    
    C_PREREQUISITES CONSTANT MDSYS.SDO_STRING2_ARRAY := MDSYS.SDO_STRING2_ARRAY(
