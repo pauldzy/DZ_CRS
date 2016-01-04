@@ -44,7 +44,7 @@ dz_crs_main.nadcon_4267_to_8265(
 FROM
 dual;
 ```
-So in this case the geometry is determined to be within the St. Paul Island grid and that grid is used for the transfomration.  Note that with Alaska, the geometry is first checked against the little island grids and then against the full Alaska grid so that the islands take precedence.
+So in this case the geometry is determined to be within the St. Paul Island grid and that grid is used for the transformation.  Note that with Alaska, the geometry is first checked against the little island grids and then against the full Alaska grid so that the islands take precedence.
 
 Also note that some care needs to be taken with larger geometries that spill outside a given grid.  The logic uses ANYINTERACT to determine the grid to use and thus with geometries sprawled across several grids, you probably will need to expressly push the correct grid.  However for point and other smaller geometries this should work fine.
 
