@@ -2,6 +2,52 @@
 Utilities for the management and manipulation of Oracle Spatial and Graph transformations and grids.
 For the most up-to-date documentation see the auto-build  [dz_crs_deploy.pdf](https://github.com/pauldzy/DZ_CRS/blob/master/dz_crs_deploy.pdf).
 
+#####NADCON Grid Support in Oracle
+Though it's difficult to find documentation on the matter, Oracle Spatial fully supports the use of NADCON (and other) grids for coordinate transformation.  While it has always been possible to rewired a given transformation chain to use a given grid, the ability to dynamically select your grid of choice has only been possible with 12.1.0.2 due to a series of game ending bugs in [previous versions](https://community.oracle.com/message/13607727#13607727).  This module provides some simple tools to leverage this functionality to allow you to make grid choices dynamically and leave the default transformation chain set to Molodensky as most folks would expect.
+
+NADCON grid files are stored as CLOBs in your MDSYS.SDO_COORD_OP_PARAM_VALS system table.  Each is best referenced by the coodinate operator id assigned to it.  
+* 1241 - Continental US
+* 1243 - Alaska
+* 1454 - Hawaii
+* 1455 - St. Lawrence Island
+* 1456 - St. Paul Island
+* 1457 - St. George Island
+* 1461 - Puerto Rico / US Virgin Islands
+
+The following function can extract the grid header and read the bounding box of the grid as a NAD27 MBR:
+```
+SELECT
+dz_crs_main.grid_to_mbr(
+   p_coord_op_param => 1454
+)
+FROM
+dual;
+```
+And knowing what grid we want we can choose the grid right in the transform call
+```
+SELECT
+MDSYS.SDO_CS.TRANSFORM(
+    MDSYS.SDO_GEOMETRY(2001,4267,MDSYS.SDO_POINT_TYPE(-87.845556,42.582222,NULL),NULL,NULL)
+   ,MDSYS.TFM_PLAN(MDSYS.SDO_TFM_CHAIN(4267,-1241,4269))
+)
+FROM
+dual;
+```
+Note: If you receive ordinates of 0,0 from the above example, you have a version of Oracle that is still buggy and you need to patch things up-to-date.  The results should be -87.8454807489324,42.5822018735498.
+
+Now the problem may be that given a bunch of data going to or coming from NAD27, your data will seldom know the proper grid to use in transforming itself (or maybe it does in which case you can stop reading).  This package can help automate the choice by testing the geometry to determine what grid is the best choice (or if no grids apply, use Molodensky).
+```
+SELECT
+dz_crs_main.nadcon_4267_to_8265(
+    MDSYS.SDO_GEOMETRY(2001,4267,MDSYS.SDO_POINT_TYPE(-170.281881235558,57.1243491442435,NULL),NULL,NULL)
+)
+FROM
+dual;
+```
+So in this case the geometry is determined to be within the St. Paul Island grid and that grid is used for the transfomration.  Note that with Alaska, the geometry is first checked against the little island grids and then against the full Alaska grid so that the islands take precedence.
+
+Also note that some care needs to be taken with larger geometries that spill outside a given grid.  The logic uses ANYINTERACT to determine the grid to use and thus with geometries sprawled across several grids, you probably will need to expressly push the correct grid.  However for point and other smaller geometries this should work fine.
+
 ##Installation
 Simply execute the deployment script into the schema of your choice.  Then execute the code using either the same or a different schema.  All procedures and functions are publically executable and utilize AUTHID CURRENT_USER for permissions handling.
 
