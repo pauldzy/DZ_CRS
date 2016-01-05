@@ -3,9 +3,9 @@ Utilities for the management and manipulation of Oracle Spatial and Graph transf
 For the most up-to-date documentation see the auto-build  [dz_crs_deploy.pdf](https://github.com/pauldzy/DZ_CRS/blob/master/dz_crs_deploy.pdf).
 
 #####NADCON Grid Support in Oracle
-Though it's difficult to find documentation on the matter, Oracle Spatial fully supports the use of NADCON (and other) grids for coordinate transformation.  While it has always been possible to rewired a given transformation chain to use a given grid, the ability to dynamically select your grid of choice has only been possible with 12.1.0.2 due to a series of game ending bugs in [previous versions](https://community.oracle.com/message/13607727#13607727).  This module provides some simple tools to leverage this functionality to allow you to make grid choices dynamically and leave the default transformation chain set to Molodensky as most folks would expect.
+Though it's difficult to find documentation on the matter, Oracle Spatial fully supports the use of NADCON (and other) grids for coordinate transformation.  While it has always been possible to rewire a given transformation chain to use a given grid, the ability to dynamically select your grid of choice has only been possible with 12.1.0.2 due to a series of game ending bugs in [previous versions](https://community.oracle.com/message/13607727#13607727).  This module provides some simple tools to leverage this functionality to allow you to make grid choices dynamically and leave the default transformation chain set to Molodensky as most folks would expect.
 
-NADCON grid files are stored as CLOBs in your MDSYS.SDO_COORD_OP_PARAM_VALS system table.  Each is best referenced by the coodinate operator id assigned to it.  
+NADCON grid files are stored as CLOBs in your MDSYS.SDO_COORD_OP_PARAM_VALS system table.  Each is best referenced by the coordinate operator id assigned to it.  
 * 1241 - Continental US
 * 1243 - Alaska
 * 1454 - Hawaii
