@@ -15,7 +15,7 @@ NADCON grid files are stored as CLOBs in your MDSYS.SDO_COORD_OP_PARAM_VALS syst
 * 1461 - Puerto Rico / US Virgin Islands
 
 The following function can extract the grid header and read the bounding box of the grid as a NAD27 MBR:
-```
+```sql
 SELECT
 dz_crs_main.grid_to_mbr(
    p_coord_op_param => 1454
@@ -24,7 +24,7 @@ FROM
 dual;
 ```
 And knowing what grid we want we can choose the grid right in the transform call
-```
+```sql
 SELECT
 MDSYS.SDO_CS.TRANSFORM(
     MDSYS.SDO_GEOMETRY(
@@ -42,7 +42,7 @@ dual;
 Note: If you receive ordinates of 0,0 from the above example, you have a version of Oracle that is still buggy and you need to patch things up-to-date.  The results should be -87.8454807489324,42.5822018735498.
 
 Now the problem may be that given a bunch of data going to or coming from NAD27, your data will seldom know the proper grid to use in transforming itself (or maybe it does in which case you can stop reading).  This package can help automate the choice by testing the geometry to determine what grid is the best choice (or if no grids apply, use Molodensky).
-```
+```sql
 SELECT
 dz_crs_main.nadcon_4267_to_8265(
     MDSYS.SDO_GEOMETRY(
