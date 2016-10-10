@@ -7,7 +7,7 @@ AS
    header: DZ_CRS
      
    - Build ID: DZBUILDIDDZ
-   - TFS Change Set: DZTFSCHANGESETDZ
+   - TFS Change Set: DZCHANGESETDZ
    
    Utilities for the management and manipulation of Oracle Spatial and Graph 
    transformations and grids.
