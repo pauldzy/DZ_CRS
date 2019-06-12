@@ -1,15 +1,9 @@
-
---*************************--
-PROMPT sqlplus_header.sql;
-
 WHENEVER SQLERROR EXIT -99;
 WHENEVER OSERROR  EXIT -98;
 SET DEFINE OFF;
 
-
-
---*************************--
-PROMPT DZ_CRS_UTIL.pks;
+--******************************--
+PROMPT Packages/DZ_CRS_UTIL.pks 
 
 CREATE OR REPLACE PACKAGE dz_crs_util
 AUTHID CURRENT_USER
@@ -69,9 +63,8 @@ END dz_crs_util;
 
 GRANT EXECUTE ON dz_crs_util TO PUBLIC;
 
-
---*************************--
-PROMPT DZ_CRS_UTIL.pkb;
+--******************************--
+PROMPT Packages/DZ_CRS_UTIL.pkb 
 
 CREATE OR REPLACE PACKAGE BODY dz_crs_util
 AS
@@ -539,9 +532,8 @@ AS
 END dz_crs_util;
 /
 
-
---*************************--
-PROMPT DZ_CRS_MAIN.pks;
+--******************************--
+PROMPT Packages/DZ_CRS_MAIN.pks 
 
 CREATE OR REPLACE PACKAGE dz_crs_main
 AUTHID CURRENT_USER
@@ -551,8 +543,8 @@ AS
    /*
    header: DZ_CRS
      
-   - Build ID: 8
-   - TFS Change Set: 8318
+   - Release: 
+   - Commit Date: Mon Oct 10 16:39:58 2016 -0400
    
    Utilities for the management and manipulation of Oracle Spatial and Graph 
    transformations and grids.
@@ -1141,9 +1133,8 @@ END dz_crs_main;
 
 GRANT EXECUTE ON dz_crs_main TO public;
 
-
---*************************--
-PROMPT DZ_CRS_MAIN.pkb;
+--******************************--
+PROMPT Packages/DZ_CRS_MAIN.pkb 
 
 CREATE OR REPLACE PACKAGE BODY dz_crs_main
 AS
@@ -2847,18 +2838,17 @@ AS
 END dz_crs_main;
 /
 
-
---*************************--
-PROMPT DZ_CRS_TEST.pks;
+--******************************--
+PROMPT Packages/DZ_CRS_TEST.pks 
 
 CREATE OR REPLACE PACKAGE dz_crs_test
 AUTHID DEFINER
 AS
 
-   C_TFS_CHANGESET CONSTANT NUMBER := 8318;
-   C_JENKINS_JOBNM CONSTANT VARCHAR2(255 Char) := 'NULL';
-   C_JENKINS_BUILD CONSTANT NUMBER := 8;
-   C_JENKINS_BLDID CONSTANT VARCHAR2(255 Char) := 'NULL';
+   C_GITRELEASE    CONSTANT VARCHAR2(255 Char) := '';
+   C_GITCOMMIT     CONSTANT VARCHAR2(255 Char) := '66aa7722eeba8cb53552f6a05e5b12f876147670';
+   C_GITCOMMITDATE CONSTANT VARCHAR2(255 Char) := 'Mon Oct 10 16:39:58 2016 -0400';
+   C_GITCOMMITAUTH CONSTANT VARCHAR2(255 Char) := 'Paul Dziemiela';
    
    C_PREREQUISITES CONSTANT MDSYS.SDO_STRING2_ARRAY := MDSYS.SDO_STRING2_ARRAY(
    );
@@ -2888,9 +2878,8 @@ END dz_crs_test;
 
 GRANT EXECUTE ON dz_crs_test TO public;
 
-
---*************************--
-PROMPT DZ_CRS_TEST.pkb;
+--******************************--
+PROMPT Packages/DZ_CRS_TEST.pkb 
 
 CREATE OR REPLACE PACKAGE BODY dz_crs_test
 AS
@@ -2933,10 +2922,12 @@ AS
    RETURN VARCHAR2
    AS
    BEGIN
-      RETURN '{"TFS":' || C_TFS_CHANGESET || ','
-      || '"JOBN":"' || C_JENKINS_JOBNM || '",'   
-      || '"BUILD":' || C_JENKINS_BUILD || ','
-      || '"BUILDID":"' || C_JENKINS_BLDID || '"}';
+      RETURN '{'
+      || ' "GITRELEASE":"'    || C_GITRELEASE    || '"'
+      || ',"GITCOMMIT":"'     || C_GITCOMMIT     || '"'
+      || ',"GITCOMMITDATE":"' || C_GITCOMMITDATE || '"'
+      || ',"GITCOMMITAUTH":"' || C_GITCOMMITAUTH || '"'
+      || '}';
       
    END version;
    
@@ -2962,11 +2953,6 @@ AS
 
 END dz_crs_test;
 /
-
-
---*************************--
-PROMPT sqlplus_footer.sql;
-
 
 SHOW ERROR;
 
@@ -3001,4 +2987,5 @@ END;
 /
 
 EXIT;
+SET DEFINE OFF;
 

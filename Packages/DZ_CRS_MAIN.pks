@@ -6,8 +6,8 @@ AS
    /*
    header: DZ_CRS
      
-   - Build ID: DZBUILDIDDZ
-   - Change Set: DZCHANGESETDZ
+   - Release: %GITRELEASE%
+   - Commit Date: %GITCOMMITDATE%
    
    Utilities for the management and manipulation of Oracle Spatial and Graph 
    transformations and grids.
